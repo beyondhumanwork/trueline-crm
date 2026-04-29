@@ -1,9 +1,9 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function ClientsPage() {
@@ -18,9 +18,9 @@ export default async function ClientsPage() {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold">Clients</h1>
-          <Button asChild size="sm">
-            <Link href="/clients/new">+ Add Client</Link>
-          </Button>
+          <Link href="/clients/new" className={cn(buttonVariants({ size: "sm" }))}>
+            + Add Client
+          </Link>
         </div>
 
         <Card>

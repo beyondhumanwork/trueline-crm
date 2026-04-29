@@ -2,8 +2,8 @@ import { AppShell } from "@/components/layout/app-shell";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -31,9 +31,9 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
               {client.email ?? "No email"} · {client.phone}
             </p>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/clients/${id}/edit`}>Edit</Link>
-          </Button>
+          <Link href={`/clients/${id}/edit`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+            Edit
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

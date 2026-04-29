@@ -26,10 +26,10 @@ export function Sidebar() {
           key={item.href}
           href={item.href}
           className={cn(
-            "w-10 h-10 rounded-lg flex items-center justify-center transition-colors",
+            "w-10 h-10 rounded-lg flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-accent",
             pathname === item.href
               ? "bg-dark-muted text-white"
-              : "text-dark-text-secondary hover:text-white"
+              : "text-dark-text-secondary hover:text-white hover:bg-dark-muted"
           )}
         >
           <item.icon size={18} strokeWidth={1.8} />

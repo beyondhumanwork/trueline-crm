@@ -9,7 +9,7 @@ export function TopBar() {
         <Search size={14} strokeWidth={1.8} className="mr-2 shrink-0" />
         <span className="truncate">Search anything...</span>
       </div>
-      <button className="text-muted-foreground hover:text-foreground">
+      <button className="text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-accent rounded" aria-label="Notifications">
         <Bell size={18} strokeWidth={1.8} />
       </button>
     </header>

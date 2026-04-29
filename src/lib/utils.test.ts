@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatCurrency, sessionsOverlap } from "./utils";
+import { formatCurrency, sessionsOverlap, sessionStatusBadge } from "./utils";
 
 describe("formatCurrency", () => {
   it("formats whole numbers", () => {
@@ -31,5 +31,18 @@ describe("sessionsOverlap", () => {
     const s1 = new Date("2026-04-29T09:00:00");
     const s2 = new Date("2026-04-29T11:00:00");
     expect(sessionsOverlap(s1, 120, s2, 60)).toBe(false);
+  });
+});
+
+describe("sessionStatusBadge", () => {
+  it("returns correct badge for known statuses", () => {
+    expect(sessionStatusBadge("completed")).toEqual({ label: "Completed", color: "text-success" });
+    expect(sessionStatusBadge("in_progress")).toEqual({ label: "In Progress", color: "text-warning" });
+    expect(sessionStatusBadge("scheduled")).toEqual({ label: "Scheduled", color: "text-muted-foreground" });
+    expect(sessionStatusBadge("no_show")).toEqual({ label: "No Show", color: "text-danger" });
+  });
+
+  it("returns fallback for unknown statuses", () => {
+    expect(sessionStatusBadge("unknown_status")).toEqual({ label: "unknown_status", color: "text-muted-foreground" });
   });
 });

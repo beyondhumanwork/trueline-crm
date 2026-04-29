@@ -32,7 +32,7 @@ export function BottomNav() {
           <span className="text-[10px]">{item.label}</span>
         </Link>
       ))}
-      <Link href="/sessions/new" className="flex flex-col items-center">
+      <Link href="/sessions/new" className="flex flex-col items-center" aria-label="New session">
         <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white -mt-5 shadow-lg">
           <Plus size={20} strokeWidth={2} />
         </div>

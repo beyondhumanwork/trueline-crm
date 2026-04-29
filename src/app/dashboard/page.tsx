@@ -26,6 +26,11 @@ export default async function DashboardPage() {
     .is("completed_at", null)
     .limit(10);
 
+  const { count: activeClients } = await supabase
+    .from("clients")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "active");
+
   const completedSessions = todaySessions?.filter((s) => s.status === "completed") ?? [];
   const totalRevenue = completedSessions.reduce((sum, s) => sum + Number(s.payment_amount ?? 0), 0);
 
@@ -50,10 +55,10 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" role="region" aria-label="Dashboard statistics">
           <StatCard title="Revenue" value={formatCurrency(totalRevenue)} trend="+18% vs last month" trendUp />
           <StatCard title="Sessions" value={`${completedSessions.length}/${todaySessions?.length ?? 0}`} trend="Today" />
-          <StatCard title="Active Clients" value="14" trend="+2 this month" trendUp />
+          <StatCard title="Active Clients" value={String(activeClients ?? 0)} trend="+2 this month" trendUp />
           <StatCard title="Follow-ups" value={String(followUps?.length ?? 0)} trend="2 overdue" />
         </div>
 

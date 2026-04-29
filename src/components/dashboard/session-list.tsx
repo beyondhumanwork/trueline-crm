@@ -25,7 +25,7 @@ export function SessionList({ sessions }: SessionListProps) {
             <div
               key={session.id}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 border-b last:border-0 cursor-pointer hover:bg-muted/50 transition-colors",
+                "flex items-center gap-3 px-4 py-3 border-b last:border-0 hover:bg-muted/50 transition-colors",
                 session.status === "in_progress" && "bg-warning/5"
               )}
             >

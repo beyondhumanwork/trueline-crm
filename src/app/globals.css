@@ -49,6 +49,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-dark: var(--color-dark-surface);
+  --color-light-surface: var(--color-light-surface);
+  --color-light-border: var(--color-light-border);
+  --color-light-muted: var(--color-light-muted);
 }
 
 :root {
@@ -93,6 +97,9 @@
   --success: #40c057;
   --warning: #fab005;
   --danger: #fa5252;
+  --color-light-surface: #ffffff;
+  --color-light-border: #e9ecef;
+  --color-light-muted: #f1f3f5;
 }
 
 .dark {

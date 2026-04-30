@@ -12,6 +12,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "TrueLine CRM",
   description: "Motorcycle training business management",
+  manifest: "/manifest.json",
+  other: {
+    "theme-color": "#e63946",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+  },
 };
 
 export default function RootLayout({

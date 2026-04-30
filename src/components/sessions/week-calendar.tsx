@@ -39,7 +39,7 @@ export function WeekCalendar({ sessions }: WeekCalendarProps) {
           }}
           className="p-1 hover:bg-accent rounded"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={18} strokeWidth={1.8} />
         </button>
         <span className="text-sm font-semibold">{weekLabel}</span>
         <button
@@ -51,7 +51,7 @@ export function WeekCalendar({ sessions }: WeekCalendarProps) {
           }}
           className="p-1 hover:bg-accent rounded"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={18} strokeWidth={1.8} />
         </button>
       </div>
 

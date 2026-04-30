@@ -15,13 +15,28 @@ interface SessionFormProps {
 export function SessionForm({ clients }: SessionFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clientId, setClientId] = useState("");
+  const [sessionType, setSessionType] = useState("");
+  const [duration, setDuration] = useState("60");
+  const [dateTime, setDateTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [notes, setNotes] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const isFormValid = clientId && sessionType && dateTime;
+
+  async function handleSubmit() {
+    if (!isFormValid) return;
     setSubmitting(true);
     setError(null);
     try {
-      await createSessionAction(new FormData(e.currentTarget));
+      await createSessionAction({
+        client_id: clientId,
+        session_type: sessionType,
+        scheduled_start: dateTime,
+        duration_minutes: Number(duration),
+        location: location || undefined,
+        notes: notes || undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create session");
     }
@@ -29,14 +44,14 @@ export function SessionForm({ clients }: SessionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       {error && (
         <div className="bg-destructive/10 text-destructive text-sm p-3 rounded">{error}</div>
       )}
 
       <div>
         <Label>Client</Label>
-        <Select name="client_id" required>
+        <Select value={clientId} onValueChange={(v) => setClientId(v ?? "")} required>
           <SelectTrigger><SelectValue placeholder="Select client..." /></SelectTrigger>
           <SelectContent>
             {clients.map((c) => (
@@ -50,7 +65,7 @@ export function SessionForm({ clients }: SessionFormProps) {
 
       <div>
         <Label>Session Type</Label>
-        <Select name="session_type" required>
+        <Select value={sessionType} onValueChange={(v) => setSessionType(v ?? "")} required>
           <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
           <SelectContent>
             <SelectItem value="private">Private Session</SelectItem>
@@ -64,11 +79,16 @@ export function SessionForm({ clients }: SessionFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <Label>Date &amp; Time</Label>
-          <Input name="scheduled_start" type="datetime-local" required />
+          <Input
+            type="datetime-local"
+            value={dateTime}
+            onChange={(e) => setDateTime(e.target.value)}
+            required
+          />
         </div>
         <div>
           <Label>Duration (min)</Label>
-          <Select name="duration_minutes" defaultValue="60">
+          <Select value={duration} onValueChange={(v) => setDuration(v ?? "60")}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="30">30 min</SelectItem>
@@ -82,17 +102,25 @@ export function SessionForm({ clients }: SessionFormProps) {
 
       <div>
         <Label>Location</Label>
-        <Input name="location" placeholder="e.g. Vaughan Mills Lot" />
+        <Input
+          placeholder="e.g. Vaughan Mills Lot"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
       </div>
 
       <div>
         <Label>Notes</Label>
-        <Textarea name="notes" rows={2} />
+        <Textarea
+          rows={2}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </div>
 
-      <Button type="submit" disabled={submitting}>
+      <Button onClick={handleSubmit} disabled={submitting || !isFormValid}>
         {submitting ? "Scheduling..." : "Schedule Session"}
       </Button>
-    </form>
+    </div>
   );
 }

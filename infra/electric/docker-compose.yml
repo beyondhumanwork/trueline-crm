@@ -1,0 +1,35 @@
+services:
+  electric:
+    build:
+      context: .
+      dockerfile: infra/electric/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      ELECTRIC_DATABASE_URL: ${ELECTRIC_DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/postgres}
+      ELECTRIC_JWT_SECRET: ${ELECTRIC_JWT_SECRET:-dev-secret-change-me}
+      PORT: "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:

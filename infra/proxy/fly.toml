@@ -1,0 +1,31 @@
+app = "trueline-proxy"
+primary_region = "iad"
+
+[env]
+  ELECTRIC_DATABASE_URL = "postgresql://user:password@db.internal:5432/dbname"
+  ELECTRIC_JWT_SECRET = "${ELECTRIC_JWT_SECRET}"
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 250
+    soft_limit = 200
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/ping"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

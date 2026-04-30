@@ -22,7 +22,7 @@ create table organizations (
 alter table organizations enable row level security;
 
 create policy "Users can view own org" on organizations
-  for select using (id in (select org_id from users where id = auth.uid()));
+  for select using (id in (select org_id from profiles where id = auth.uid()));
 
 -- Profiles (mapped to Supabase auth, separate from auth.users)
 create table profiles (

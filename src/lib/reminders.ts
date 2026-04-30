@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 /** Send a reminder email for a specific session */
 export async function sendReminder(
@@ -18,6 +19,11 @@ export async function sendReminder(
   });
 
   const locationLine = location ? `Location: ${location}\n` : "";
+
+  if (!resend) {
+    console.log(`[DRY RUN] Reminder for ${clientName} at ${formattedDate}`);
+    return;
+  }
 
   await resend.emails.send({
     from: "TrueLine CRM <onboarding@resend.dev>",

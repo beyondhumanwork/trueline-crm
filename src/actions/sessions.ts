@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { sessionsOverlap } from "@/lib/utils";
 
+const MS_PER_MINUTE = 60000;
+
 interface SessionInput {
   client_id: string;
   session_type: string;
@@ -29,9 +31,8 @@ export async function createSessionAction(input: SessionInput) {
 
   const scheduledStart = new Date(input.scheduled_start);
   const duration = input.duration_minutes || 60;
-  const scheduledEnd = new Date(scheduledStart.getTime() + duration * 60000);
+  const scheduledEnd = new Date(scheduledStart.getTime() + duration * MS_PER_MINUTE);
 
-  // Conflict detection: check existing sessions
   const { data: existing } = await supabase
     .from("sessions")
     .select("scheduled_start, scheduled_end")
@@ -44,7 +45,7 @@ export async function createSessionAction(input: SessionInput) {
         scheduledStart,
         duration,
         new Date(s.scheduled_start),
-        (new Date(s.scheduled_end).getTime() - new Date(s.scheduled_start).getTime()) / 60000
+        (new Date(s.scheduled_end).getTime() - new Date(s.scheduled_start).getTime()) / MS_PER_MINUTE
       )
     );
     if (hasConflict) {

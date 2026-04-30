@@ -11,19 +11,27 @@ interface WeekCalendarProps {
   sessions: SessionRow[];
 }
 
+function getMonday(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+
 export function WeekCalendar({ sessions }: WeekCalendarProps) {
-  const [weekStart, setWeekStart] = useState(() => {
-    const now = new Date();
-    const day = now.getDay();
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(now.setDate(diff));
-  });
+  const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
 
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart);
     d.setDate(d.getDate() + i);
     return d;
   });
+
+  const shiftWeek = (offset: number) => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + offset * 7);
+    setWeekStart(d);
+  };
 
   const weekLabel = `${days[0].toLocaleDateString("en-CA", { month: "short", day: "numeric" })} — ${days[6].toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" })}`;
 
@@ -32,11 +40,7 @@ export function WeekCalendar({ sessions }: WeekCalendarProps) {
       <div className="flex items-center justify-between mb-3">
         <button
           type="button"
-          onClick={() => {
-            const d = new Date(weekStart);
-            d.setDate(d.getDate() - 7);
-            setWeekStart(d);
-          }}
+          onClick={() => shiftWeek(-1)}
           className="p-1 hover:bg-accent rounded"
         >
           <ChevronLeft size={18} strokeWidth={1.8} />
@@ -44,11 +48,7 @@ export function WeekCalendar({ sessions }: WeekCalendarProps) {
         <span className="text-sm font-semibold">{weekLabel}</span>
         <button
           type="button"
-          onClick={() => {
-            const d = new Date(weekStart);
-            d.setDate(d.getDate() + 7);
-            setWeekStart(d);
-          }}
+          onClick={() => shiftWeek(1)}
           className="p-1 hover:bg-accent rounded"
         >
           <ChevronRight size={18} strokeWidth={1.8} />

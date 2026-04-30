@@ -10,6 +10,17 @@ const SESSION_TYPE_LABELS: Record<string, string> = {
   corporate: "Corporate",
 };
 
+function RevenueError({ message }: { message: string }) {
+  return (
+    <AppShell>
+      <div className="space-y-4">
+        <h1 className="text-xl font-bold">Revenue</h1>
+        <p className="text-sm text-muted-foreground">{message}</p>
+      </div>
+    </AppShell>
+  );
+}
+
 export default async function RevenuePage() {
   const supabase = await createClient();
 
@@ -17,36 +28,24 @@ export default async function RevenuePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return (
-      <AppShell>
-        <h1 className="text-xl font-bold">Revenue</h1>
-        <p className="text-sm text-muted-foreground mt-2">Not authenticated</p>
-      </AppShell>
-    );
-  }
+  if (!user) return <RevenueError message="Not authenticated" />;
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("org_id")
     .eq("id", user.id)
     .single();
 
-  if (!profile) {
-    return (
-      <AppShell>
-        <h1 className="text-xl font-bold">Revenue</h1>
-        <p className="text-sm text-muted-foreground mt-2">Profile not found</p>
-      </AppShell>
-    );
-  }
+  if (!profile || profileError) return <RevenueError message="Profile not found" />;
 
-  const { data: sessions } = await supabase
+  const { data: sessions, error: sessionsError } = await supabase
     .from("sessions")
-    .select("*")
+    .select("payment_amount, scheduled_start, session_type")
     .eq("status", "completed")
     .eq("org_id", profile.org_id)
     .order("scheduled_start", { ascending: true });
+
+  if (sessionsError) return <RevenueError message="Failed to load revenue data" />;
 
   const completedSessions = sessions ?? [];
 

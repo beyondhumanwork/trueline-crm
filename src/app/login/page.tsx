@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,31 +10,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("error") === "auth-failed") {
-      setError("Magic link expired or invalid. Please try again.");
-    }
-  }, []);
+  const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error: signInError } = await supabase.auth.signInWithOtp({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
+      password,
     });
     if (signInError) {
       setError(signInError.message);
+      setLoading(false);
     } else {
-      setSent(true);
+      router.push("/dashboard");
     }
-    setLoading(false);
   }
 
   return (
@@ -41,28 +37,14 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-xl font-bold">TrueLine CRM</CardTitle>
-          <p className="text-sm text-muted-foreground">Sign in with email magic link</p>
+          <p className="text-sm text-muted-foreground">Sign in with email and password</p>
         </CardHeader>
         <CardContent>
           {error && (
             <p className="text-sm text-destructive mb-4">{error}</p>
           )}
-          {sent ? (
-            <div className="space-y-3">
-              <p className="text-sm text-success">Check your email for the magic link.</p>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  setSent(false);
-                  setEmail("");
-                }}
-              >
-                Use a different email
-              </Button>
-            </div>
-          ) : (
-            <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -72,11 +54,22 @@ export default function LoginPage() {
                 required
                 autoComplete="email"
               />
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Sending..." : "Sign in"}
-              </Button>
-            </form>
-          )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
